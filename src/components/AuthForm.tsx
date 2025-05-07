@@ -3,11 +3,15 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../utils/firebase';
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    updateProfile,
+} from 'firebase/auth';
+import { auth } from '@/utils/firebase';
 import { useNavigate } from 'react-router';
 
-// Define Sign In and Sign Up schemas
+// Zod validation schemas
 const signInSchema = z.object({
     email: z.string().min(1, 'Email is required').email('Invalid email'),
     password: z
@@ -23,22 +27,22 @@ const signUpSchema = signInSchema.extend({
 
 type SignInData = z.infer<typeof signInSchema>;
 type SignUpData = z.infer<typeof signUpSchema>;
-type FormData = z.infer<typeof signInSchema> | z.infer<typeof signUpSchema>;
+type FormData = SignInData | SignUpData;
 
 const AuthForm = () => {
     const [isSignIn, setIsSignIn] = useState(true);
     const [showRecaptchaInfo, setShowRecaptchaInfo] = useState(false);
+    const navigate = useNavigate();
 
     const toggleMode = () => setIsSignIn((prev) => !prev);
     const handleRecaptchaClick = () => setShowRecaptchaInfo(true);
-    const navigate = useNavigate();
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
-    } = useForm<SignInData | SignUpData>({
+    } = useForm<FormData>({
         mode: 'all',
         resolver: zodResolver(isSignIn ? signInSchema : signUpSchema),
     });
@@ -50,15 +54,24 @@ const AuthForm = () => {
                 toast.success('Successfully signed in!');
                 navigate('/browse');
             } else {
-                const userCrediancials = await createUserWithEmailAndPassword(
+                const userCredential = await createUserWithEmailAndPassword(
                     auth,
                     data.email,
                     data.password
                 );
-                console.log(userCrediancials);
+
+                // 👤 Update Firebase user profile
+                if ('name' in data) {
+                    await updateProfile(userCredential.user, {
+                        displayName: data.name,
+                        photoURL:
+                            'https://i.pinimg.com/564x/1b/a2/e6/1ba2e6d1d4874546c70c91f1024e17fb.jpg',
+                    });
+                }
 
                 toast.success('Account created successfully!');
             }
+
             reset();
         } catch (error) {
             const err = error as Error;
@@ -83,10 +96,10 @@ const AuthForm = () => {
                                 {...register('name')}
                                 className="w-full px-4 py-3 rounded bg-[#333] focus:outline-none"
                             />
+                            {errors.name && (
+                                <p className="text-sm text-red-500">{errors.name.message}</p>
+                            )}
                         </div>
-                        {errors.name && (
-                            <p className="text-sm text-red-500">{errors.name.message}</p>
-                        )}
                     </>
                 )}
 
@@ -124,7 +137,6 @@ const AuthForm = () => {
                 {isSignIn && (
                     <>
                         <div className="text-center text-gray-400">OR</div>
-
                         <button
                             type="button"
                             className="w-full bg-gray-600 hover:bg-gray-500 transition-colors py-3 font-medium rounded"
@@ -184,9 +196,7 @@ const AuthForm = () => {
                             >
                                 Terms of Service
                             </a>
-                            , and is used for providing, maintaining, and improving the reCAPTCHA
-                            service and for general security purposes (it is not used for
-                            personalised advertising by Google).
+                            .
                         </>
                     )}
                 </p>
