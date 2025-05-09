@@ -14,3 +14,4 @@ export const API_OPTIONS = {
 };
 
 export const BACKGROUND_VIDEO_BASE_API_URL = 'https://api.themoviedb.org/3';
+export const IMAGE_CDN = 'https://image.tmdb.org/t/p/original';

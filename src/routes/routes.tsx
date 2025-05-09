@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router';
 import { AuthLayout, BrowserLayout } from '../Layout';
-import { Browse, Login, NotFoundPage } from '../pages';
+import { Browse, Login, NotFoundPage, WatchPage } from '../pages';
 
 const AppRoutes = () => {
     return (
@@ -13,6 +13,7 @@ const AppRoutes = () => {
             {/* Browse Routes (protected section) */}
             <Route element={<BrowserLayout />}>
                 <Route path="/browse" element={<Browse />} />
+                <Route path="/movie/:id" element={<WatchPage />} />
             </Route>
 
             {/* Wildcard Route for 404 Not Found */}

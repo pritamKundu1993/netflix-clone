@@ -1,54 +1,118 @@
-# React + TypeScript + Vite
+# Netflix Clone 🎬
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-featured Netflix UI clone built with React, TypeScript, Tailwind CSS, Redux Toolkit, and The Movie Database (TMDb) API. This app allows users to browse popular, trending, and top-rated movies, watch trailers, and search content — all styled to closely resemble Netflix's interface.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   🎥 Browse movies by categories (Trending, Popular, Top Rated)
+-   🔍 Search for movies
+-   ▶️ Watch YouTube trailers
+-   🧠 Smart trailer selection (official, YouTube only)
+-   🧱 Modular architecture with reusable components
+-   🌙 Dark theme (Netflix style)
+-   🔄 Loading states and error handling
+-   📱 Responsive UI
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+-   **Frontend**: React, TypeScript, Tailwind CSS, Shadcn UI
+-   **State Management**: Redux Toolkit
+-   **API**: [The Movie Database (TMDb) API](https://developer.themoviedb.org/docs)
+-   **Custom Hooks**: `useYoutubeTrailer` for fetching trailers
+-   **Routing**: React Router (if used)
+-   **Icons**: React Icons or Lucide
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
+## 📁 Folder Structure
+
+src/
+│
+├── app/ # Redux store setup
+├── components/ # Reusable UI components
+├── features/ # Feature slices (e.g., movies)
+├── hooks/ # Custom hooks (e.g., useYoutubeTrailer)
+├── pages/ # Page components (e.g., Home, MovieDetail)
+├── styles/ # Global styles and Tailwind config
+├── utils/ # Constants and helper functions
+│ └── constants.ts
+├── types/ # TypeScript interfaces
+├── App.tsx # Root app component
+└── main.tsx # App entry point
+
+bash
+Copy
+Edit
+
+## 🔐 API Key
+
+This project uses TMDb's API. You must provide your own API key in `utils/constants.ts`.
+
+```ts
+export const API_OPTIONS = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: 'Bearer <YOUR_TMDB_BEARER_TOKEN>',
   },
-})
-```
+};
+You can get your TMDb token from https://www.themoviedb.org/settings/api
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+🧪 Custom Hook: useYoutubeTrailer
+Fetches and returns the official YouTube trailer key for a given movie ID.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+ts
+Copy
+Edit
+const { trailerKey, loading } = useYoutubeTrailer(movieId);
+🧰 Setup Instructions
+Clone the repo
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+bash
+Copy
+Edit
+git clone https://github.com/pritamKundu1993/netflix-clone
+cd netflix-clone
+Install dependencies
+
+bash
+Copy
+Edit
+npm install
+Add your TMDb API token
+
+Go to src/utils/constants.ts
+
+Replace the Authorization header with your own TMDb bearer token
+
+Start the app
+
+bash
+Copy
+Edit
+npm run dev
+Open http://localhost:5173 in your browser 🚀
+
+📸 Screenshots
+Add some screenshots or a Loom video here if possible
+
+🙌 Acknowledgements
+TMDb API
+
+Netflix for design inspiration
+
+Shadcn UI
+
+Tailwind CSS
+
+React
+
+📜 License
+This project is for learning and demo purposes only. Netflix is a registered trademark of Netflix, Inc.
+
+yaml
+Copy
+Edit
+
+---
+
+Let me know if you want me to generate badges, add deployment instructions (e.g., Vercel/Netlify), o
 ```

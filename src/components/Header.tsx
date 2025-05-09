@@ -3,7 +3,7 @@ import { RootState } from '../store';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/utils/firebase';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { LOGO_URL, PROFILE_URL } from '@/utils/constanct';
 import { Bell, Heart, Search, ChevronDown } from 'lucide-react';
 
@@ -43,9 +43,9 @@ const BrowseHeader = () => {
                     className="w-[150px] h-[70px] object-contain"
                 />
                 <nav className="flex gap-5 text-sm font-semibold">
-                    <a href="#" className="hover:text-gray-300">
+                    <Link to="/browse" className="hover:text-gray-300">
                         HOME
-                    </a>
+                    </Link>
                     <a href="#" className="hover:text-gray-300">
                         TV SHOWS
                     </a>
