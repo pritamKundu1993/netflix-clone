@@ -1,10 +1,11 @@
-import { Bell, Heart, Search, ChevronDown } from 'lucide-react';
-import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 import { RootState } from '../store';
-import { useNavigate } from 'react-router';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/utils/firebase';
-import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { LOGO_URL, PROFILE_URL } from '@/utils/constanct';
+import { Bell, Heart, Search, ChevronDown } from 'lucide-react';
 
 import {
     DropdownMenu,
@@ -37,7 +38,7 @@ const BrowseHeader = () => {
             {/* Left Section */}
             <div className="flex items-center gap-10">
                 <img
-                    src="https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production/consent/87b6a5c0-0104-4e96-a291-092c11350111/01938dc4-59b3-7bbc-b635-c4131030e85f/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
+                    src={LOGO_URL}
                     alt="Netflix Logo"
                     className="w-[150px] h-[70px] object-contain"
                 />
@@ -68,7 +69,7 @@ const BrowseHeader = () => {
                     <DropdownMenuTrigger asChild>
                         <div className="flex items-center gap-2 cursor-pointer">
                             <img
-                                src="https://i.pinimg.com/564x/1b/a2/e6/1ba2e6d1d4874546c70c91f1024e17fb.jpg"
+                                src={PROFILE_URL}
                                 alt="User"
                                 className="w-10 h-10 rounded object-cover"
                             />

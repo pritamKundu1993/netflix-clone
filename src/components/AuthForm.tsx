@@ -1,8 +1,8 @@
-import { z } from 'zod';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -10,6 +10,8 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/utils/firebase';
 import { useNavigate } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { addUser } from '@/features/auth/authSlice';
 
 // Zod validation schemas
 const signInSchema = z.object({
@@ -33,6 +35,7 @@ const AuthForm = () => {
     const [isSignIn, setIsSignIn] = useState(true);
     const [showRecaptchaInfo, setShowRecaptchaInfo] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const toggleMode = () => setIsSignIn((prev) => !prev);
     const handleRecaptchaClick = () => setShowRecaptchaInfo(true);
@@ -50,7 +53,23 @@ const AuthForm = () => {
     const onSubmit = async (data: FormData) => {
         try {
             if (isSignIn) {
-                await signInWithEmailAndPassword(auth, data.email, data.password);
+                const userCredential = await signInWithEmailAndPassword(
+                    auth,
+                    data.email,
+                    data.password
+                );
+
+                const user = userCredential.user;
+
+                dispatch(
+                    addUser({
+                        email: user.email ?? '',
+                        uid: user.uid,
+                        displayName: user.displayName ?? '',
+                        photoURL: user.photoURL ?? '',
+                    })
+                );
+
                 toast.success('Successfully signed in!');
                 navigate('/browse');
             } else {
@@ -59,17 +78,34 @@ const AuthForm = () => {
                     data.email,
                     data.password
                 );
+                const user = userCredential.user;
 
-                // 👤 Update Firebase user profile
                 if ('name' in data) {
-                    await updateProfile(userCredential.user, {
+                    await updateProfile(user, {
                         displayName: data.name,
                         photoURL:
                             'https://i.pinimg.com/564x/1b/a2/e6/1ba2e6d1d4874546c70c91f1024e17fb.jpg',
                     });
+
+                    // Reload user to get updated displayName
+                    await user.reload();
+
+                    const updatedUser = auth.currentUser;
+
+                    if (updatedUser) {
+                        dispatch(
+                            addUser({
+                                email: updatedUser.email ?? '',
+                                uid: updatedUser.uid,
+                                displayName: updatedUser.displayName ?? '',
+                                photoURL: updatedUser.photoURL ?? '',
+                            })
+                        );
+                    }
                 }
 
                 toast.success('Account created successfully!');
+                navigate('/browse');
             }
 
             reset();
@@ -88,19 +124,17 @@ const AuthForm = () => {
                 <h2 className="text-3xl font-semibold">{isSignIn ? 'Sign In' : 'Sign Up'}</h2>
 
                 {!isSignIn && (
-                    <>
-                        <div>
-                            <input
-                                type="text"
-                                placeholder="Full Name"
-                                {...register('name')}
-                                className="w-full px-4 py-3 rounded bg-[#333] focus:outline-none"
-                            />
-                            {errors.name && (
-                                <p className="text-sm text-red-500">{errors.name.message}</p>
-                            )}
-                        </div>
-                    </>
+                    <div>
+                        <input
+                            type="text"
+                            placeholder="Full Name"
+                            {...register('name')}
+                            className="w-full px-4 py-3 rounded bg-[#333] focus:outline-none"
+                        />
+                        {errors.name && (
+                            <p className="text-sm text-red-500">{errors.name.message}</p>
+                        )}
+                    </div>
                 )}
 
                 <div>
